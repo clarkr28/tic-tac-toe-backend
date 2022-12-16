@@ -1,4 +1,5 @@
 from flask import Flask, Response
+from services.tic_tac_toe_board import TicTacToeBoard
 import json
 
 '''Flask setup'''
@@ -18,8 +19,16 @@ def get_next_move(board_state, next_move):
                         status=400,
                         mimetype='application/json')
 
-    board_state = f'{next_move}{board_state[1:]}'
-    return Response(response=json.dumps({'board': board_state}),
+    # parse the board and try to perform the next move
+    board = TicTacToeBoard(board_state)
+    valid_move_performed = board.performMove(next_move)
+
+    if not valid_move_performed:
+        return Response(response=json.dumps({'message': 'move could not be performed'}),
+                        status=400,
+                        mimetype='application/json')
+
+    return Response(response=json.dumps({'board': str(board)}),
                         status=200,
                         mimetype='application/json')
 
