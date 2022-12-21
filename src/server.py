@@ -1,19 +1,24 @@
 from flask import Flask, Response
+from flask_cors import CORS
 from services.tic_tac_toe_board import TicTacToeBoard
 import json
 
+
 '''Flask setup'''
 app = Flask(__name__)
+CORS(app)
+
 
 @app.route('/', methods=['GET'])
 def hello_world():
-    response = Response(response=json.dumps({'message': 'hello world!'}),
+    return Response(response=json.dumps({'message': 'hello world!'}),
                         status=200,
                         mimetype='application/json')
-    return response
+
 
 @app.route('/nextmove/<board_state>/<next_move>', methods=['GET'])
 def get_next_move(board_state, next_move): 
+    '''given the board and next mover, perform a move and return the new board state'''
     if len(board_state) != 9:
         return Response(response=json.dumps({'message': 'invalid board'}),
                         status=400,
